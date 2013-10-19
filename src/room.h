@@ -15,10 +15,13 @@ public:
 	float doorAngle;
 	void drawRoom();
 	Room();
+	Room(float size);
 private:
+	float size;
 	GLuint wallList;
-	void createWallList;
-	
+	GLuint doorList;
+	void createWallList();	
+	void createDoorList();
 };
 
 #endif

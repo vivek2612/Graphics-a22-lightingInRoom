@@ -13,6 +13,7 @@
 #include "cuboid.h"
 #include "table.h"
 #include "chair.h"
+#include "room.h"
 
 #define _USE_MATH_DEFINES
 
@@ -30,7 +31,7 @@ int mode = -1;
 Cuboid cuboidObject(3.0,3.0);
 Table tableObject(5.0,6.0,1.0f);
 Chair chairObject(3.0,6.0,0.6);
-
+Room roomObject(10.0);
 
 void initGL() {
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
@@ -51,6 +52,7 @@ void initGL() {
    cuboidObject.createAllLists();
    tableObject.createAllLists();
    chairObject.createAllLists();
+   roomObject.createAllLists();
 }
  
 void display() {
@@ -65,14 +67,16 @@ void display() {
    glRotatef(verticalDegree, 0.0f, 0.0f, 1.0f);
    glColor3f(1.0f, 1.0f, 1.0f);   
 
-   glTranslatef(-15.0f,-2.0,0.0);
-   cuboidObject.drawCuboid();
+   glTranslatef(-25.0f,-2.0,0.0);
+   /*cuboidObject.drawCuboid();
 
    glTranslatef(10.0,0.0,-20.0f);
    tableObject.drawTable();
 
    glTranslatef(20.0f,-2.0,10.0);
-   chairObject.drawChair();
+   chairObject.drawChair();*/
+
+   roomObject.drawRoom();
    //glDisable(GL_TEXTURE_2D);
    glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
 }
@@ -134,6 +138,12 @@ void keyboard(unsigned char key, int x, int y){
     case '-':
     {
       cuboidObject.lidAngle-=1.0f;
+      glutPostRedisplay();
+      break;
+    }
+    case 'd':
+    {
+      roomObject.doorAngle+=1.0f;
       glutPostRedisplay();
       break;
     }
