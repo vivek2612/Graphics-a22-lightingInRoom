@@ -14,8 +14,10 @@
 #include "table.h"
 #include "chair.h"
 #include "room.h"
+#include "vector"
 
 #define _USE_MATH_DEFINES
+
 
 /* Global variables */
 char title[] = "3D Shapes";
@@ -33,6 +35,10 @@ Table tableObject(5.0,6.0,1.0f);
 Chair chairObject(3.0,6.0,0.6);
 Room roomObject(10.0);
 
+
+ Bezier b;
+
+
 void initGL() {
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
    glClearDepth(1.0f);                   // Set background depth to farthest
@@ -41,18 +47,19 @@ void initGL() {
    glShadeModel(GL_SMOOTH);   // Enable smooth shading
    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
 
-   vector<Point> v;
-   v.push_back(Point(0.0,0.0, 0.0));
-   v.push_back(Point(1.0,0.0, 0.0));
-   v.push_back(Point(2.0,0.0, 0.0));
-   Bezier b(v);
-   Point p=b.findCurvePoint(0.75);
-   cout<< p.x << " "<<p.y<<endl;
 
    cuboidObject.createAllLists();
    tableObject.createAllLists();
    chairObject.createAllLists();
    roomObject.createAllLists();
+
+   vector<Point> v;
+   v.push_back(Point(0.0,0.0, 0.0));
+   v.push_back(Point(1.0,30.0, 0.0));
+   v.push_back(Point(20.0,5.0, 0.0));
+   v.push_back(Point(90.0,5.0, 3.0));
+   v.push_back(Point(60.0,-50.0, -10.0));
+   b=Bezier(v);
 }
  
 void display() {
@@ -67,16 +74,19 @@ void display() {
    glRotatef(verticalDegree, 0.0f, 0.0f, 1.0f);
    glColor3f(1.0f, 1.0f, 1.0f);   
 
-   glTranslatef(-25.0f,-2.0,0.0);
-   /*cuboidObject.drawCuboid();
+ /*  glTranslatef(-25.0f,-2.0,0.0);
+   cuboidObject.drawCuboid();
+
+  glTranslatef(20.0f,-2.0,10.0);
+   chairObject.drawChair();
 
    glTranslatef(10.0,0.0,-20.0f);
    tableObject.drawTable();
 
-   glTranslatef(20.0f,-2.0,10.0);
-   chairObject.drawChair();*/
+   glTranslatef(10.0f,-2.0,15.0);
+   roomObject.drawRoom();*/
 
-   roomObject.drawRoom();
+   b.drawCurve();
    //glDisable(GL_TEXTURE_2D);
    glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
 }
@@ -93,7 +103,7 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
    glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
    glLoadIdentity();             // Reset
    // Enable perspective projection with fovy, aspect, zNear and zFar
-   gluPerspective(60.0f, aspect, 0.1f, 100.0f);
+   gluPerspective(60.0f, aspect, 0.1f, 1000.0f);
 }
  
 void mouse(int button, int state, int x, int y){
@@ -143,7 +153,7 @@ void keyboard(unsigned char key, int x, int y){
     }
     case 'd':
     {
-      roomObject.doorAngle+=1.0f;
+      roomObject.doorAngle-=1.0f;
       glutPostRedisplay();
       break;
     }

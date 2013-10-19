@@ -17,8 +17,11 @@ public:
 	Bezier(vector<Point> v);
 	vector<Point> controlPoints;
 	Point findCurvePoint(float t);  // t = parameter
+	void drawCurve();
+	Bezier();
 private:
-	Point findCurvePointHelper(float t, vector<Point> newControlPoints, int length);
+	Point findCurvePointHelper(float t, 
+		vector<Point> newControlPoints, int length);
 };
 
 #endif

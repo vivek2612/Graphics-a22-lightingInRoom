@@ -4,6 +4,9 @@ Bezier::Bezier(vector<Point> v){
 	controlPoints = v;
 }
 
+Bezier::Bezier(){
+	
+}
 // finds the corresponding point on the curve using de-castlo algorithm
 Point Bezier::findCurvePoint(float t){
 	return findCurvePointHelper(t, controlPoints, controlPoints.size());
@@ -20,4 +23,18 @@ Point Bezier::findCurvePointHelper(float t, vector<Point> newControlPoints, int 
 	}
 	length--;
 	return findCurvePointHelper(t, newControlPoints, length);
+}
+
+void Bezier::drawCurve(){
+	float t=0.0;
+	Point prevPoint = findCurvePoint(0.0);
+	while(t<1.0){
+		t+=0.01;
+		Point nextPoint = findCurvePoint(t);
+		glBegin(GL_LINES);
+		    glVertex3f(prevPoint.x, prevPoint.y, prevPoint.z);
+		    glVertex3f(nextPoint.x, nextPoint.y, nextPoint.z);
+		glEnd();
+		prevPoint = nextPoint;
+	}
 }

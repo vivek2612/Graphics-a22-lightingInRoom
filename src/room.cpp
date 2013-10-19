@@ -36,9 +36,9 @@ void Room::createDoorList(){
 void Room::drawRoom(){
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glPushMatrix();
-		// glCallList(wallList);
 
 		//firstly, draw the front face with a door
+		// The portion of front face : aside the door
 		glPushMatrix();
 			glTranslatef(1.0*size/3.0,0.0,0.0);
 			glBegin(GL_QUADS);
@@ -49,21 +49,20 @@ void Room::drawRoom(){
 			glEnd();
 		glPopMatrix();
 
+		// The portion of front face above the door
 		glPushMatrix();
 			glTranslatef(-2.0*size/3.0,size/2.0,0.0);
 			glCallList(doorList);
 		glPopMatrix();
 
+		// The door
 		glPushMatrix();
 			glColor3f(0.6f, 0.7f, 0.9f);
-
 			glTranslatef(-2.0*size/3.0,-(size/2.0),0.0);
-			
 			glTranslatef(-1.0*size/3.0,0.0,size);
 			glRotatef(doorAngle,0.0,-1.0,0.0);
 			glTranslatef(1.0*size/3.0,0.0,-size);
 			glCallList(doorList);
-			
 		glPopMatrix();
 
 		glPushMatrix();
