@@ -37,7 +37,10 @@ void Table::createAllLists(){
 }
 
 void Table::drawTable(){
+	GLuint t;
+	Texture tex;
 	glPushMatrix();
+		t=tex.loadBMP_custom("./images/seat.bmp");
 		surface.drawCuboid();
 		glPushMatrix();
 			glTranslatef(size,0.0,size);

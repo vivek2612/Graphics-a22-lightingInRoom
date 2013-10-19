@@ -6,6 +6,7 @@
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "tex.h"
 
 using namespace std;
 

@@ -14,6 +14,7 @@
 #include "table.h"
 #include "chair.h"
 #include "room.h"
+#include "tex.h"
 #include "vector"
 
 #define _USE_MATH_DEFINES
@@ -30,67 +31,107 @@ float eyez=30.0f;
 // Human humanObject;
 int mode = -1;
 /* Initialize OpenGL Graphics */
-Cuboid cuboidObject(3.0,3.0);
+Cuboid cuboidObject(2.0,1.0);
 Table tableObject(5.0,6.0,1.0f);
 Chair chairObject(3.0,6.0,0.6);
-Room roomObject(10.0);
-
-
- Bezier b;
-
+float roomSize=45.0;
+Room roomObject(roomSize);
+Point clickedPoint;
+vector<Point> controlPoints;
+Bezier b;
+vector<Point> curvePoints;
+int i=0;
+float zParam=0.0;
+vector<Point> v;
 
 void initGL() {
-   glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
-   glClearDepth(1.0f);                   // Set background depth to farthest
-   glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
-   glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
-   glShadeModel(GL_SMOOTH);   // Enable smooth shading
-   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
+  glClearDepth(1.0f);                   // Set background depth to farthest
+  glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
+  glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
+  glShadeModel(GL_SMOOTH);   // Enable smooth shading
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
 
+  cuboidObject.createAllLists();
+  tableObject.createAllLists();
+  chairObject.createAllLists();
+  roomObject.createAllLists();
 
-   cuboidObject.createAllLists();
-   tableObject.createAllLists();
-   chairObject.createAllLists();
-   roomObject.createAllLists();
-
-   vector<Point> v;
-   v.push_back(Point(0.0,0.0, 0.0));
-   v.push_back(Point(1.0,30.0, 0.0));
-   v.push_back(Point(20.0,5.0, 0.0));
-   v.push_back(Point(90.0,5.0, 3.0));
-   v.push_back(Point(60.0,-50.0, -10.0));
-   b=Bezier(v);
+  v.push_back(Point(0,0,0));
+  v.push_back(Point(10.-5.0,0,0));
+  v.push_back(Point(2.0,14.0,10));
+  b.controlPoints=v;
+  curvePoints=b.findCurve();
 }
- 
+
+
 void display() {
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
-   //glEnable(GL_TEXTURE_2D);
-   //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-   glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
-   
-   glLoadIdentity();
-   gluLookAt(eyex, eyey, eyez, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-   glRotatef(degree, 0.0f, 1.0f, 0.0f);
-   glRotatef(verticalDegree, 0.0f, 0.0f, 1.0f);
-   glColor3f(1.0f, 1.0f, 1.0f);   
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
 
- /*  glTranslatef(-25.0f,-2.0,0.0);
-   cuboidObject.drawCuboid();
+    glLoadIdentity();
+    gluLookAt(eyex, eyey, eyez, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+    glPushMatrix();
+    glRotatef(degree, 0.0f, 1.0f, 0.0f);
+    glRotatef(verticalDegree, 0.0f, 0.0f, 1.0f);
+    glColor3f(1.0f, 1.0f, 1.0f);   
 
-  glTranslatef(20.0f,-2.0,10.0);
-   chairObject.drawChair();
+    glTranslatef(-5.0f,8.0,10.0);
+    Texture tex;
+    GLuint boxTexture;
 
-   glTranslatef(10.0,0.0,-20.0f);
-   tableObject.drawTable();
 
-   glTranslatef(10.0f,-2.0,15.0);
-   roomObject.drawRoom();*/
+    roomObject.drawRoom();
+    glPushMatrix();
+      glTranslatef(0.0,-2*roomSize/3,-roomSize/2.0);
+      tableObject.drawTable();
+      boxTexture = tex.loadBMP_custom("./images/wood2.bmp");
+      glTranslatef(0.0,2.0,0.0);
+      cuboidObject.drawCuboid();
+    glPopMatrix();
 
-   b.drawCurve();
-   //glDisable(GL_TEXTURE_2D);
-   glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
+
+    glPushMatrix();
+      glTranslatef(roomSize/2.0,-2*roomSize/3.0,0.0);
+      chairObject.drawChair();
+    glPopMatrix();
+
+    glPopMatrix();
+    b.drawCurve(curvePoints);
+    
+    glDisable(GL_TEXTURE_2D);
+    glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
 }
+
+// source : http://nehe.gamedev.net/article/using_gluunproject/16013/
+Point GetOGLPos(int x, int y)
+{
+    GLint viewport[4];
+    GLdouble modelview[16];
+    GLdouble projection[16];
+    GLfloat winX, winY, winZ;
+    GLdouble posX, posY, posZNear,posZFar,posZ;
  
+    glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+    glGetDoublev( GL_PROJECTION_MATRIX, projection );
+    glGetIntegerv(GL_VIEWPORT,viewport);
+ 
+    winX = (float)x;
+    winY = (float)viewport[3] - (float)y;
+    glReadPixels( x, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
+    // gluUnProject( winX, winY, 0, modelview, projection, viewport, &posX, &posY, &posZNear);
+    // gluUnProject( winX, winY, 1, modelview, projection, viewport, &posX, &posY, &posZFar);
+    gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
+    
+    /*posZNear=10.0f;
+    posZFar=-20.0f;
+    posZ = (1- zParam)*posZNear + zParam*posZFar;*/
+    // cout<<posZNear<<" "<<posZFar<<endl;
+    cout<<posZ<<endl;
+    return Point(posX, posY, posZ);
+}
 
 void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integer
    if (height == 0) height = 1;                // To prevent divide by 0
@@ -107,7 +148,27 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
 }
  
 void mouse(int button, int state, int x, int y){
-    glutPostRedisplay();
+  if (state == GLUT_DOWN){
+    if(mode==1){
+      if(button == GLUT_LEFT_BUTTON){
+        if(clickedPoint.x==-1 && clickedPoint.y==-1 && clickedPoint.z==-1){
+          controlPoints.clear();
+          curvePoints.clear();
+          zParam=0.0;
+        }
+        clickedPoint= GetOGLPos(x,y);
+        controlPoints.push_back(clickedPoint);
+      }
+      else if(button == GLUT_RIGHT_BUTTON){
+        mode=-1;
+        i=0;
+        clickedPoint = Point(-1,-1,-1);
+        b.controlPoints=controlPoints;
+        curvePoints = b.findCurve();
+      }
+    }
+  }
+  glutPostRedisplay();
 }
 
 void inputKey(int key, int x, int y) 
@@ -122,6 +183,38 @@ void inputKey(int key, int x, int y)
 
 void keyboard(unsigned char key, int x, int y){
   switch(key){
+    case 't':
+    {
+      zParam+=0.1;
+      cout<<zParam<<":"<<endl;
+      if(zParam>1.0) zParam=1.0;
+      break;
+    }
+    case 'T':
+    {
+      zParam-=0.1;
+      if(zParam<0.0) zParam=0.0;
+      break;
+    }
+    case '1':
+    {
+      mode=1;
+      glutPostRedisplay();
+      break;
+    }
+    case 'n':
+    {
+      int len = curvePoints.size();
+      if(len!=0){
+        eyex=curvePoints[i%len].x;
+        eyey=curvePoints[i%len].y;
+        eyez=curvePoints[i%len].z;
+      }
+      glutPostRedisplay();
+      i++;
+      break;
+    }
+
     case 27:
     {
          exit(0);

@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "cuboid.h"
+#include "tex.h"
 
 using namespace std;
 

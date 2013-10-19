@@ -16,12 +16,13 @@ class Bezier{
 public:
 	Bezier(vector<Point> v);
 	vector<Point> controlPoints;
-	Point findCurvePoint(float t);  // t = parameter
-	void drawCurve();
+	void drawCurve(vector<Point> v);
+	vector<Point> findCurve();
 	Bezier();
 private:
 	Point findCurvePointHelper(float t, 
-		vector<Point> newControlPoints, int length);
+	vector<Point> newControlPoints, int length);
+	Point findCurvePoint(float t);  // t = parameter
 };
 
 #endif
