@@ -26,6 +26,7 @@ void Table::createLegList(){
 		GLUquadricObj *quadratic;
 		quadratic = gluNewQuadric();
 		glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+		gluQuadricNormals( quadratic, GL_TRUE );
 		gluCylinder(quadratic,legRadius,legRadius-0.2,height,32,32);
 	glPopMatrix();
 	glEndList();
@@ -40,7 +41,7 @@ void Table::drawTable(){
 	GLuint t;
 	Texture tex;
 	glPushMatrix();
-		t=tex.loadBMP_custom("./images/seat.bmp");
+		t=tex.loadBMP_custom("./images/leg.bmp");
 		surface.drawCuboid();
 		glPushMatrix();
 			glTranslatef(size,0.0,size);

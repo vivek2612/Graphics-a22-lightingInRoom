@@ -27,14 +27,14 @@ float verticalDegree = 0.0f;
 // Box boxObject;
 float lidAngle=0.0;
 float eyex=0.0f,eyey=0.0f;
-float eyez=30.0f;
+float eyez=1.0f;
 // Human humanObject;
 int mode = -1;
 /* Initialize OpenGL Graphics */
 Cuboid cuboidObject(2.0,1.0);
 Table tableObject(5.0,6.0,1.0f);
 Chair chairObject(3.0,6.0,0.6);
-float roomSize=45.0;
+float roomSize=35.0;
 Room roomObject(roomSize);
 Point clickedPoint;
 vector<Point> controlPoints;
@@ -47,10 +47,33 @@ vector<Point> v;
 void initGL() {
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
   glClearDepth(1.0f);                   // Set background depth to farthest
-  glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
-  glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
+  //glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
+  //glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
   glShadeModel(GL_SMOOTH);   // Enable smooth shading
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
+
+  GLfloat light_ambient[] =
+    {1.0, 0.0, 1.0, 1.0};
+    GLfloat light_diffuse[] =
+    {1.0, 1.0, 1.0, 1.0};
+    GLfloat light_specular[] =
+    {1.0, 1.0, 1.0, 1.0};
+/* light_position is NOT default value */
+    GLfloat light_position[] =
+    {roomSize,-roomSize,-roomSize, 1.0};
+    // {0.0,0.0,0.0,1.0};
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+    glEnable(GL_LIGHT0);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+
+
 
   cuboidObject.createAllLists();
   tableObject.createAllLists();
@@ -68,35 +91,46 @@ void initGL() {
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
     glEnable(GL_TEXTURE_2D);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
 
     glLoadIdentity();
-    gluLookAt(eyex, eyey, eyez, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-    glPushMatrix();
+    glColor3f(1.0f, 1.0f, 1.0f); 
+    glPointSize(50.0f);
+    glBegin(GL_POINTS);
+      glVertex3f(roomSize,-roomSize,-roomSize);
+    glEnd();
+    gluLookAt(eyex, eyey, eyez, 0.0f, -20.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+    
     glRotatef(degree, 0.0f, 1.0f, 0.0f);
     glRotatef(verticalDegree, 0.0f, 0.0f, 1.0f);
-    glColor3f(1.0f, 1.0f, 1.0f);   
 
-    glTranslatef(-5.0f,8.0,10.0);
-    Texture tex;
-    GLuint boxTexture;
+    glColor3f(1.0f, 1.0f, 1.0f); 
+    glPointSize(50.0f);
+    glBegin(GL_POINTS);
+      glVertex3f(roomSize,-roomSize,-roomSize);
+    glEnd();
 
-
-    roomObject.drawRoom();
+    //glTranslatef(-5.0f,8.0,10.0);
     glPushMatrix();
-      glTranslatef(0.0,-2*roomSize/3,-roomSize/2.0);
-      tableObject.drawTable();
-      boxTexture = tex.loadBMP_custom("./images/wood2.bmp");
-      glTranslatef(0.0,2.0,0.0);
-      cuboidObject.drawCuboid();
-    glPopMatrix();
+      
+      Texture tex;
+      GLuint boxTexture;
 
 
-    glPushMatrix();
-      glTranslatef(roomSize/2.0,-2*roomSize/3.0,0.0);
-      chairObject.drawChair();
-    glPopMatrix();
+      roomObject.drawRoom();
+      glPushMatrix();
+        glTranslatef(0.0,-2*roomSize/3,-roomSize/2.0);
+        tableObject.drawTable();
+        boxTexture = tex.loadBMP_custom("./images/wood2.bmp");
+        glTranslatef(0.0,2.0,0.0);
+        cuboidObject.drawCuboid();
+      glPopMatrix();
+
+      glPushMatrix();
+        glTranslatef(roomSize/2.0,-2*roomSize/3.0,0.0);
+        chairObject.drawChair();
+      glPopMatrix();
 
     glPopMatrix();
     b.drawCurve(curvePoints);
@@ -247,6 +281,24 @@ void keyboard(unsigned char key, int x, int y){
     case 'd':
     {
       roomObject.doorAngle-=1.0f;
+      glutPostRedisplay();
+      break;
+    }
+    case 'D':
+    {
+      roomObject.doorAngle+=1.0f;
+      glutPostRedisplay();
+      break;
+    }
+    case '/':
+    {
+      eyey+=1.0f;
+      glutPostRedisplay();
+      break;
+    }
+    case '?':
+    {
+      eyey-=1.0f;
       glutPostRedisplay();
       break;
     }

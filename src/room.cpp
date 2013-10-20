@@ -13,6 +13,7 @@ void Room::createWallList(){
 	wallList=glGenLists(1);
 	glNewList(wallList, GL_COMPILE);
 		glBegin(GL_QUADS);
+			glNormal3f(0,0,-1);
 			glTexCoord2f(0.0, 0.0);glVertex3f(size,-size,size);
 			glTexCoord2f(0.0, 1.0);glVertex3f(size,size,size);
 			glTexCoord2f(1.0, 1.0);glVertex3f(-size,size,size);
@@ -25,6 +26,7 @@ void Room::createDoorList(){
 	doorList=glGenLists(1);
 	glNewList(doorList, GL_COMPILE);
 		glBegin(GL_QUADS);
+			glNormal3f(0,0,-1);
 			glTexCoord2f(0.0, 0.0);glVertex3f(1.0*size/3.0,-(size/2.0),size);
 			glTexCoord2f(0.0, 1.0);glVertex3f(1.0*size/3.0,size/2.0,size);
 			glTexCoord2f(1.0, 1.0);glVertex3f(-1.0*size/3.0,size/2.0,size);
@@ -57,6 +59,7 @@ void Room::drawRoom(){
 		glPushMatrix();
 			glTranslatef(1.0*size/3.0,0.0,0.0);
 			glBegin(GL_QUADS);
+				glNormal3f(0,0,-1);
 				glTexCoord2f(0.0, 0.0);glVertex3f(2.0*size/3.0,-size,size);
 				glTexCoord2f(0.0, 1.0);glVertex3f(2.0*size/3.0,size,size);
 				glTexCoord2f(1.0, 1.0);glVertex3f(-2.0*size/3.0,size,size);

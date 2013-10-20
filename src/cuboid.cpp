@@ -19,6 +19,7 @@ void Cuboid::createLateralList(){
 	lateralList=glGenLists(1);
 	glNewList(lateralList, GL_COMPILE);
 		glBegin(GL_QUADS);
+			glNormal3f(0,0,1);
 			glTexCoord2f(0.0, 0.0);glVertex3f(breadth,-height,breadth);
 			glTexCoord2f(0.0, 1.0);glVertex3f(breadth,height,breadth);
 			glTexCoord2f(1.0, 1.0);glVertex3f(-breadth,height,breadth);
@@ -31,6 +32,7 @@ void Cuboid::createTopBottomList(){
 	topBottomList=glGenLists (1);
 	glNewList(topBottomList, GL_COMPILE);
 		glBegin(GL_QUADS);
+			glNormal3f(0,0,1);
 			glTexCoord2f(0.0, 0.0);glVertex3f( breadth,-breadth,breadth);
 		    glTexCoord2f(0.0, 1.0);glVertex3f( breadth, breadth,breadth);
 		    glTexCoord2f(1.0, 1.0);glVertex3f(-breadth, breadth,breadth);
