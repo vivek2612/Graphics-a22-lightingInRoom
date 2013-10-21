@@ -73,6 +73,7 @@ void Room::drawRoom(){
 			glCallList(doorList);
 		glPopMatrix();
 
+
 		glPushMatrix();
 			glColor3f(0.6f, 1.0f, 0.9f);
 			glRotatef(90.0f, 0.0f, -1.0f, 0.0f);
@@ -90,11 +91,11 @@ void Room::drawRoom(){
 		glPopMatrix();
 		glPushMatrix();
 			glColor3f(0.1f, 1.0f, 0.1f);
-			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+			glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
 			glCallList(wallList);
 		glPopMatrix();
 		glPushMatrix();
-			glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 			glCallList(wallList);
 		glPopMatrix();
 
