@@ -62,6 +62,7 @@ void Cuboid::drawCuboid(){
 		glPopMatrix();
 		glPushMatrix();
 			glColor3f(0.1f, 1.0f, 0.1f);
+			glTranslatef(0.0,0.09f*(lidAngle/2.0),0.0);
 			glTranslatef(0.0,-(height-breadth),0.0);
 			glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 			glCallList(topBottomList);

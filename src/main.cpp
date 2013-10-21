@@ -136,9 +136,10 @@ void display() {
         tableObject.drawTable();
        
         
-        glTranslatef(0.0,4.9,0.0);
-         glPushMatrix();
+        glTranslatef(0.0,4.8,0.0);
+        glPushMatrix();
         glScalef(0.6,0.6,0.6);
+        glTranslatef(0.0,-0.2f,0.0);
         humanObject.drawHuman();        
         glPopMatrix();
         boxTexture = tex.loadBMP_custom("./images/wood2.bmp");
@@ -265,15 +266,19 @@ void keyboard(unsigned char key, int x, int y){
     }
     case '=':
     {
-      cuboidObject.lidAngle+=2.0f;
-      humanObject.hipTranslatey+=0.15f;
+      if(cuboidObject.lidAngle < 221.0f){
+      	cuboidObject.lidAngle+=2.0f;
+      	humanObject.hipTranslatey+=0.15f;
+      }
       glutPostRedisplay();
        break;
     }
     case '-':
     {
-      cuboidObject.lidAngle-=2.0f;
-      humanObject.hipTranslatey-=0.15f;
+      if(cuboidObject.lidAngle > 0.0f){
+      	cuboidObject.lidAngle-=2.0f;
+        humanObject.hipTranslatey-=0.15f;
+      }
       glutPostRedisplay();
       break;
     }
