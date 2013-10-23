@@ -91,7 +91,8 @@ void initGL() {
   // v.push_back(Point(2.0,14.0,10));
   b.controlPoints=v;
   curvePoints=b.findCurve();
-  light0=true;light1=true,light2=true;
+  light0=true;light1=true;
+  light2=true;
   printInstructions();
 }
 
@@ -102,13 +103,20 @@ void display() {
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
 
+    glLoadIdentity();
+    gluLookAt(eyex, eyey, eyez, 0.0f, -6*roomSize/7,0.0, 0.0f, 1.0f, 0.0f);
 
-
-    GLfloat light_ambient[] = {0.0, 0.0, 0.0, 1.0};
+    GLfloat light_ambient[] = {1.0, 1.0, 1.0, 1.0};
+    // GLfloat light_ambient[] = {0.0, 0.0, 0.0, 1.0};  
     GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};
-    GLfloat light0_position[] ={roomSize/2.0,-roomSize/2.0,roomSize/2.0,1.0}; 
+    GLfloat light0_position[] ={roomSize/2.0,-roomSize/2.0,-roomSize/2.0,1.0}; 
     GLfloat light1_position[] ={0.0,-roomSize/2.0,roomSize/2.0,1.0}; 
-    GLfloat light2_position[] ={0.0,-6*roomSize/7 + 15.5f ,-20.0,1.0}; 
+    GLfloat light2_position[] ={0.0,-6.0*roomSize/7.0 + 21.0f ,-20.0,1.0}; 
+    glColor3f(1.0, 1.0, 1.0);
+    glPointSize(20.0f); 
+    glBegin(GL_POINTS);
+    	glVertex3f(0.0,-6.0*roomSize/7.0 + 21.0f ,-20.0);
+    glEnd();
 
 
     if(light0){
@@ -141,9 +149,6 @@ void display() {
     	glDisable(GL_LIGHT2);
     }
 
-    glLoadIdentity();
-    gluLookAt(eyex, eyey, eyez, 0.0f, -6*roomSize/7,0.0, 0.0f, 1.0f, 0.0f);
-
     Texture tex;
     GLuint boxTexture;
     glPushMatrix();
@@ -151,7 +156,7 @@ void display() {
     // Drawing Lamp
 
     glPushMatrix();
-    	glTranslatef(0.0,-6*roomSize/7 + 14.5f ,-20.0);
+    	glTranslatef(0.0,-6.0*roomSize/7.0 + 14.5f ,-20.0);
     	lampObject.drawLamp();
     glPopMatrix();
 
@@ -172,7 +177,7 @@ void display() {
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(roomSize/2.0,-6*roomSize/7,0.0);
+    glTranslatef(roomSize/2.0,-6.0*roomSize/7.0,0.0);
     chairObject.drawChair();
 
     glPopMatrix();
