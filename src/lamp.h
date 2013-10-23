@@ -6,6 +6,7 @@
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "tex.h"
 
 using namespace std;
 
@@ -17,7 +18,12 @@ public:
 	Lamp(float height,float radius); 
 	void drawLamp();
 private:
-	GLuint lampList;
+	GLuint neckList;
+	GLuint headList;
+	GLuint baseList;
+	void createHeadList();
+	void createNeckList();
+	void createBaseList();
 };
 
 #endif

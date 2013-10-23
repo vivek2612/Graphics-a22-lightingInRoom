@@ -45,7 +45,7 @@ vector<Point> curvePoints;
 int i=0;
 float zParam=0.0;
 vector<Point> v;
-bool light0,light1;
+bool light0,light1,light2;
 
 void printInstructions(){
 	cout<<endl<<
@@ -81,12 +81,17 @@ void initGL() {
   humanObject.createAllLists();
   lampObject.createAllLists();
 
+  // v.push_back(Point(0,0,0));
+  v.push_back(Point(-20,0,-20));
+  v.push_back(Point(-10.0,5,20.0));
+  v.push_back(Point(-10,10,30));
+  v.push_back(Point(10,10,30));
+  v.push_back(Point(30,10,35));
   v.push_back(Point(0,0,0));
-  v.push_back(Point(10.-5.0,0,0));
-  v.push_back(Point(2.0,14.0,10));
+  // v.push_back(Point(2.0,14.0,10));
   b.controlPoints=v;
   curvePoints=b.findCurve();
-  light0=true;light1=true;
+  light0=true;light1=true,light2=true;
   printInstructions();
 }
 
@@ -99,10 +104,12 @@ void display() {
 
 
 
-    GLfloat light_ambient[] = {1.0, 1.0, 1.0, 1.0};
+    GLfloat light_ambient[] = {0.0, 0.0, 0.0, 1.0};
     GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};
     GLfloat light0_position[] ={roomSize/2.0,-roomSize/2.0,roomSize/2.0,1.0}; 
     GLfloat light1_position[] ={0.0,-roomSize/2.0,roomSize/2.0,1.0}; 
+    GLfloat light2_position[] ={0.0,-6*roomSize/7 + 15.5f ,-20.0,1.0}; 
+
 
     if(light0){
     	glEnable(GL_LIGHT0);
@@ -124,6 +131,16 @@ void display() {
     	glDisable(GL_LIGHT1);
     }
 
+    if(light2){
+    	glEnable(GL_LIGHT2);
+    	glLightfv(GL_LIGHT2, GL_AMBIENT, light_ambient);
+    	glLightfv(GL_LIGHT2, GL_DIFFUSE, light_diffuse);
+    	glLightfv(GL_LIGHT2, GL_POSITION, light2_position);
+    }
+    else{
+    	glDisable(GL_LIGHT2);
+    }
+
     glLoadIdentity();
     gluLookAt(eyex, eyey, eyez, 0.0f, -6*roomSize/7,0.0, 0.0f, 1.0f, 0.0f);
 
@@ -134,7 +151,7 @@ void display() {
     // Drawing Lamp
 
     glPushMatrix();
-    	glTranslatef(0.0,-6*roomSize/7 + 14.5f ,0.0);
+    	glTranslatef(0.0,-6*roomSize/7 + 14.5f ,-20.0);
     	lampObject.drawLamp();
     glPopMatrix();
 
@@ -246,6 +263,21 @@ void inputKey(int key, int x, int y)
 	}
 }
 
+void animation(int j){
+	int len = curvePoints.size();
+	if (j<len){
+		if(len!=0){
+			eyex=curvePoints[j%len].x;
+			eyey=curvePoints[j%len].y;
+			eyez=curvePoints[j%len].z;
+		}
+		glutPostRedisplay();
+		j++;
+		glutTimerFunc(10,animation,j);
+	}
+
+}
+
 void keyboard(unsigned char key, int x, int y){
 	switch(key){  
 		case 'b':
@@ -256,14 +288,7 @@ void keyboard(unsigned char key, int x, int y){
 		}
 		case 'n':
 		{
-			int len = curvePoints.size();
-			if(len!=0){
-				eyex=curvePoints[i%len].x;
-				eyey=curvePoints[i%len].y;
-				eyez=curvePoints[i%len].z;
-			}
-			glutPostRedisplay();
-			i++;
+			glutTimerFunc(10,animation,0);
 			break;
 		}
 
@@ -321,458 +346,464 @@ void keyboard(unsigned char key, int x, int y){
 			break;
 		}
 		case ']':
-{
-	light1=(!light1);
-	glutPostRedisplay();
-	break;
-}
-//
-case 'r':{
-	humanObject.reset();
-	glutPostRedisplay();
-}
-case '0':{
-	mode = 0;
-	glutPostRedisplay();
-	break;
-}
-case '1':{
-	mode = 1;
-	glutPostRedisplay();
-	break;
-}
-case '2':{
-	mode = 2;
-	glutPostRedisplay();
-	break;
-}
-case '3':{
-	mode = 3;
-	glutPostRedisplay();
-	break;
-}
-case '4':{
-	mode = 4;
-	glutPostRedisplay();
-	break;
-}
-case '5':{
-	mode = 5;
-	glutPostRedisplay();
-	break;
-}
-case '6':{
-	mode = 6;
-	glutPostRedisplay();
-	break;
-}
-case '7':{
-	mode = 7;
-	glutPostRedisplay();
-	break;
-}
-case '8':{
-	mode = 8;
-	glutPostRedisplay();
-	break;
-}
-case 'p':{
-	mode = 9;
-	glutPostRedisplay();
-	break;
-}
-case 'o':{
-	mode = 10;
-	glutPostRedisplay();
-	break;
-}
-case 'i':{
-	mode = 11;
-	glutPostRedisplay();
-	break;
-}
-case 'u':{
-	mode = 12;
-	glutPostRedisplay();
-	break;
-}
-case 'z':{
-	if(mode>=0){
-		if(mode == 0){
-          //Hip Translation
-			humanObject.hipTranslatez += 0.1f;
+		{
+			light1=(!light1);
+			glutPostRedisplay();
+			break;
 		}
-		else if (mode == 1){
-          // Head Rotation
-			if(humanObject.headz <= 45.0f)
-				humanObject.headz += 2.0f;
+		case 'l':
+		{
+			light2=(!light2);
+			glutPostRedisplay();
+			break;
 		}
-		else if (mode == 2){
-          // Neck Rotation
-			if(humanObject.neckz <= 25.0f)
-				humanObject.neckz += 2.0f;
+	
+		case 'r':{
+			humanObject.reset();
+			glutPostRedisplay();
 		}
-		else if (mode == 3){
-          // Torso Rotation
-			if(humanObject.torsoz <= 25.0f)
-				humanObject.torsoz += 2.0f;
+		case '0':{
+			mode = 0;
+			glutPostRedisplay();
+			break;
 		}
-		else if (mode == 4){
-			if((((int)humanObject.leftUpperArmx)%360 <= 20.0f || ((int)humanObject.leftUpperArmx)%360 >= 340.0f) && humanObject.leftUpperArmy >= 30.0f){
+		case '1':{
+			mode = 1;
+			glutPostRedisplay();
+			break;
+		}
+		case '2':{
+			mode = 2;
+			glutPostRedisplay();
+			break;
+		}
+		case '3':{
+			mode = 3;
+			glutPostRedisplay();
+			break;
+		}
+		case '4':{
+			mode = 4;
+			glutPostRedisplay();
+			break;
+		}
+		case '5':{
+			mode = 5;
+			glutPostRedisplay();
+			break;
+		}
+		case '6':{
+			mode = 6;
+			glutPostRedisplay();
+			break;
+		}
+		case '7':{
+			mode = 7;
+			glutPostRedisplay();
+			break;
+		}
+		case '8':{
+			mode = 8;
+			glutPostRedisplay();
+			break;
+		}
+		case 'p':{
+			mode = 9;
+			glutPostRedisplay();
+			break;
+		}
+		case 'o':{
+			mode = 10;
+			glutPostRedisplay();
+			break;
+		}
+		case 'i':{
+			mode = 11;
+			glutPostRedisplay();
+			break;
+		}
+		case 'u':{
+			mode = 12;
+			glutPostRedisplay();
+			break;
+		}
+		case 'z':{
+			if(mode>=0){
+				if(mode == 0){
+		          //Hip Translation
+					humanObject.hipTranslatez += 0.1f;
+				}
+				else if (mode == 1){
+		          // Head Rotation
+					if(humanObject.headz <= 45.0f)
+						humanObject.headz += 2.0f;
+				}
+				else if (mode == 2){
+		          // Neck Rotation
+					if(humanObject.neckz <= 25.0f)
+						humanObject.neckz += 2.0f;
+				}
+				else if (mode == 3){
+		          // Torso Rotation
+					if(humanObject.torsoz <= 25.0f)
+						humanObject.torsoz += 2.0f;
+				}
+				else if (mode == 4){
+					if((((int)humanObject.leftUpperArmx)%360 <= 20.0f || ((int)humanObject.leftUpperArmx)%360 >= 340.0f) && humanObject.leftUpperArmy >= 30.0f){
 
-				if(humanObject.leftUpperArmz < 0.0f && humanObject.leftUpperArmz < 4.0/7.0*humanObject.leftLowerArmx ){
-					humanObject.leftUpperArmz+=2.0f;
-				}
-			}else{
-				if(humanObject.leftUpperArmz < 0.0f)
-					humanObject.leftUpperArmz += 2.0f;
-			}
-		}
-		else if (mode == 6){
-			if(humanObject.rightUpperArmz<180.0f)
-				humanObject.rightUpperArmz+=2.0f;
-		}
-		else if(mode == 8){
-			if(humanObject.hipz < 45.0f)
-				humanObject.hipz += 2.0f;
-		}
-		else if(mode == 9){
-			if(humanObject.leftUpperLegz < 0.0f)
-				humanObject.leftUpperLegz += 2.0f;
-		}
-		else if(mode == 11){
-			if(humanObject.rightUpperLegz < 45.0f)
-				humanObject.rightUpperLegz += 2.0f;
-		}
-	}
-	glutPostRedisplay();
-	break;
-}
-case 'Z':{
-	if(mode>=0){
-		if(mode == 0){
-          //Hip Translation
-			humanObject.hipTranslatez -= 0.1f;
-		}
-		else if (mode == 1){
-          // Head Rotation
-			if(humanObject.headz >= -45.0f)
-				humanObject.headz -= 2.0f;
-		}
-		else if (mode == 2){
-          // Neck Rotation
-			if(humanObject.neckz >= -25.0f)
-				humanObject.neckz -= 2.0f;
-		}
-		else if (mode == 3){
-          // Neck Rotation
-			if(humanObject.torsoz >= -25.0f)
-				humanObject.torsoz -= 2.0f;
-		}
-		else if(mode == 4){
-			if(humanObject.leftUpperArmz >= -180.0f)
-				humanObject.leftUpperArmz -= 2.0f;
-		}
-		else if(mode == 6){
-			if((((int)humanObject.rightLowerArmx)%360 < 20.0f || ((int)humanObject.rightLowerArmx)%360 > 340.0f ) && humanObject.rightUpperArmy < -30.0f){
-				if(humanObject.rightUpperArmz > 0.0f && humanObject.rightUpperArmz > fabs(4.0/7.0*humanObject.rightLowerArmx)){
-					humanObject.rightUpperArmz -= 2.0f;
-				}
-			}
-			else{
-				if(humanObject.rightUpperArmz > 0.0f){
-					humanObject.rightUpperArmz -= 2.0f;
-				}
-			}
-		}
-		else if(mode == 8){
-			if(humanObject.hipz > -45.0f)
-				humanObject.hipz -= 2.0f;
-		}
-		else if(mode == 9){
-			if(humanObject.leftUpperLegz > -45.0f)
-				humanObject.leftUpperLegz -= 2.0f;
-		}
-		else if(mode == 11){
-			if(humanObject.rightUpperLegz > 0.0f)
-				humanObject.rightUpperLegz -= 2.0f;
-		}
-	}
-	glutPostRedisplay();
-	break;
-}
-case 'x':{
-	if(mode >= 0){
-		if(mode == 0){
-            //Hip Translation
-			humanObject.hipTranslatex += 0.1f;
-		}
-		else if(mode == 1){
-            // Head Rotation
-			if(humanObject.headx<=45.0f)
-				humanObject.headx+=2.0f;
-		}
-		else if(mode == 2){
-            // Neck Rotation
-			if(humanObject.neckx<=25.0f)
-				humanObject.neckx+=2.0f;
-		}
-		else if(mode == 3){
-            // Neck Rotation
-			if(humanObject.torsox<=25.0f)
-				humanObject.torsox+=2.0f;
-		}
-		else if(mode == 4){
-            // Upper Arm Rotation
-			humanObject.leftUpperArmx+=2.0f;
-		}
-		else if(mode == 5){
-			if(humanObject.leftLowerArmx <= 0.0f)
-				humanObject.leftLowerArmx +=2.0f;
-		}
-		else if(mode == 6){
-            // Upper Arm Rotation
-			humanObject.rightUpperArmx+=2.0f;
-		}
-		else if(mode == 7){
-			if(humanObject.rightLowerArmx <= 0.0f)
-				humanObject.rightLowerArmx +=2.0f;
-		}
-		else if(mode == 8){
-			if(humanObject.hipx < 45.0f)
-				humanObject.hipx += 2.0f;
-		}
-		else if(mode == 9){
-			if(humanObject.leftUpperLegx < 60.0f)
-				humanObject.leftUpperLegx += 2.0f;
-		}
-		else if(mode == 10){
-			if(humanObject.leftLowerLegx < 120.0f)
-				humanObject.leftLowerLegx += 2.0f;
-		}
-		else if(mode == 11){
-			if(humanObject.rightUpperLegx < 60.0f)
-				humanObject.rightUpperLegx += 2.0f;
-		}
-		else if(mode == 12){
-			if(humanObject.rightLowerLegx < 120.0f)
-				humanObject.rightLowerLegx += 2.0f;
-		}
-	}
-	glutPostRedisplay();
-	break;
-}
-case 'X':{
-	if(mode >= 0){
-		if(mode == 0){
-            //Hip Translation
-			humanObject.hipTranslatex -= 0.1f;
-		}
-		else if(mode == 1){
-            // Head Rotation
-			if(humanObject.headx>=-45.0f)
-				humanObject.headx-=2.0f;
-		}
-		else if(mode == 2){
-            // Head Rotation
-			if(humanObject.neckx>=-25.0f)
-				humanObject.neckx-=2.0f;
-		}
-		else if(mode == 3){
-            // Head Rotation
-			if(humanObject.torsox>=-25.0f)
-				humanObject.torsox-=2.0f;
-		}
-		else if(mode == 4){
-            //Upper Arm Rotation
-			humanObject.leftUpperArmx-=2.0f;
-		}
-		else if(mode == 5){
-			if((((int)humanObject.leftUpperArmx)%360 <= 20.0f || ((int)humanObject.leftUpperArmx)%360 >= 340.0f) && humanObject.leftUpperArmy >= 30.0f){
-				if(humanObject.leftUpperArmz > -90.0f && humanObject.leftLowerArmx > -135.0f && humanObject.leftLowerArmx > 7.0/4.0*humanObject.leftUpperArmz){
-					humanObject.leftLowerArmx -= 2.0f;
-				}
-				else if(humanObject.leftUpperArmz < -90.0f){
-					if(humanObject.leftLowerArmx > -135.0f){
-						humanObject.leftLowerArmx -= 2.0f;
+						if(humanObject.leftUpperArmz < 0.0f && humanObject.leftUpperArmz < 4.0/7.0*humanObject.leftLowerArmx ){
+							humanObject.leftUpperArmz+=2.0f;
+						}
+					}else{
+						if(humanObject.leftUpperArmz < 0.0f)
+							humanObject.leftUpperArmz += 2.0f;
 					}
 				}
-			}
-			else{
-				if(humanObject.leftLowerArmx > -135.0f){
-					humanObject.leftLowerArmx -= 2.0f;
+				else if (mode == 6){
+					if(humanObject.rightUpperArmz<180.0f)
+						humanObject.rightUpperArmz+=2.0f;
+				}
+				else if(mode == 8){
+					if(humanObject.hipz < 45.0f)
+						humanObject.hipz += 2.0f;
+				}
+				else if(mode == 9){
+					if(humanObject.leftUpperLegz < 0.0f)
+						humanObject.leftUpperLegz += 2.0f;
+				}
+				else if(mode == 11){
+					if(humanObject.rightUpperLegz < 45.0f)
+						humanObject.rightUpperLegz += 2.0f;
 				}
 			}
+			glutPostRedisplay();
+			break;
 		}
-		else if(mode == 6){
-            //Upper Arm Rotation
-			humanObject.rightUpperArmx-=2.0f;
-		}
-		else if(mode == 7){
-			if((((int)humanObject.rightUpperArmx)%360 <= 20.0f || ((int)humanObject.rightUpperArmx)%360 >= 340.0f) && humanObject.rightUpperArmy < -30.0f){
-				if(humanObject.rightUpperArmz < 90.0f && humanObject.rightLowerArmx > -135.0f && humanObject.rightLowerArmx > -1.0*7.0/4.0*humanObject.rightUpperArmz){
-					humanObject.rightLowerArmx -= 2.0f;
+		case 'Z':{
+			if(mode>=0){
+				if(mode == 0){
+		          //Hip Translation
+					humanObject.hipTranslatez -= 0.1f;
 				}
-				else if(humanObject.rightUpperArmz > 90.0f){
-					if(humanObject.rightLowerArmx > -135.0f){
-						humanObject.rightLowerArmx -= 2.0f;
+				else if (mode == 1){
+		          // Head Rotation
+					if(humanObject.headz >= -45.0f)
+						humanObject.headz -= 2.0f;
+				}
+				else if (mode == 2){
+		          // Neck Rotation
+					if(humanObject.neckz >= -25.0f)
+						humanObject.neckz -= 2.0f;
+				}
+				else if (mode == 3){
+		          // Neck Rotation
+					if(humanObject.torsoz >= -25.0f)
+						humanObject.torsoz -= 2.0f;
+				}
+				else if(mode == 4){
+					if(humanObject.leftUpperArmz >= -180.0f)
+						humanObject.leftUpperArmz -= 2.0f;
+				}
+				else if(mode == 6){
+					if((((int)humanObject.rightLowerArmx)%360 < 20.0f || ((int)humanObject.rightLowerArmx)%360 > 340.0f ) && humanObject.rightUpperArmy < -30.0f){
+						if(humanObject.rightUpperArmz > 0.0f && humanObject.rightUpperArmz > fabs(4.0/7.0*humanObject.rightLowerArmx)){
+							humanObject.rightUpperArmz -= 2.0f;
+						}
+					}
+					else{
+						if(humanObject.rightUpperArmz > 0.0f){
+							humanObject.rightUpperArmz -= 2.0f;
+						}
 					}
 				}
-			}
-			else{
-				if(humanObject.rightLowerArmx > -135.0f){
-					humanObject.rightLowerArmx -= 2.0f;
+				else if(mode == 8){
+					if(humanObject.hipz > -45.0f)
+						humanObject.hipz -= 2.0f;
+				}
+				else if(mode == 9){
+					if(humanObject.leftUpperLegz > -45.0f)
+						humanObject.leftUpperLegz -= 2.0f;
+				}
+				else if(mode == 11){
+					if(humanObject.rightUpperLegz > 0.0f)
+						humanObject.rightUpperLegz -= 2.0f;
 				}
 			}
+			glutPostRedisplay();
+			break;
 		}
-		else if(mode == 8){
-			if(humanObject.hipx > -45.0f)
-				humanObject.hipx -= 2.0f;         
-		}
-		else if(mode == 9){
-			if(humanObject.leftUpperLegx > -90.0f)
-				humanObject.leftUpperLegx -= 2.0f;
-		}
-		else if(mode == 10){
-			if(humanObject.leftLowerLegx > 0.0f)
-				humanObject.leftLowerLegx -= 2.0f;
-		}
-		else if(mode == 11){
-			if(humanObject.rightUpperLegx > -90.0f)
-				humanObject.rightUpperLegx -= 2.0f;
-		}
-		else if(mode == 12){
-			if(humanObject.rightLowerLegx > 0.0f)
-				humanObject.rightLowerLegx -= 2.0f;
-		}
-	}
-	glutPostRedisplay();
-	break;
-}
-case 'c':{
-	if(mode >= 0){
-		if(mode == 0){
-            //Hip Translation
-			humanObject.hipTranslatey += 0.1f;
-		}
-		else if(mode == 1){
-            // Head Rotation
-			if(humanObject.heady<=60.0f)
-				humanObject.heady+=2.0f;
-		}
-		else if(mode == 2){
-            // Head Rotation
-			if(humanObject.necky<=45.0f)
-				humanObject.necky+=2.0f;
-		}
-		else if(mode == 3){
-            // Head Rotation
-			if(humanObject.torsoy<=45.0f)
-				humanObject.torsoy+=2.0f;
-		}
-		else if(mode == 4){
-            // Left Upper Arm Rotation
-			if(((int)humanObject.rightUpperArmx )%360<= 20.0f || ((int)humanObject.rightUpperArmx)%360 >= 340.0f){
-				if(humanObject.leftUpperArmz > 4.0/7.0*humanObject.leftLowerArmx){
-					if(humanObject.leftUpperArmy < 30.0f)
-						humanObject.leftUpperArmy += 2.0f;
-				}else{
-					if(humanObject.leftUpperArmy < 90.0f)
-						humanObject.leftUpperArmy += 2.0f;
+		case 'x':{
+			if(mode >= 0){
+				if(mode == 0){
+		            //Hip Translation
+					humanObject.hipTranslatex += 0.1f;
+				}
+				else if(mode == 1){
+		            // Head Rotation
+					if(humanObject.headx<=45.0f)
+						humanObject.headx+=2.0f;
+				}
+				else if(mode == 2){
+		            // Neck Rotation
+					if(humanObject.neckx<=25.0f)
+						humanObject.neckx+=2.0f;
+				}
+				else if(mode == 3){
+		            // Neck Rotation
+					if(humanObject.torsox<=25.0f)
+						humanObject.torsox+=2.0f;
+				}
+				else if(mode == 4){
+		            // Upper Arm Rotation
+					humanObject.leftUpperArmx+=2.0f;
+				}
+				else if(mode == 5){
+					if(humanObject.leftLowerArmx <= 0.0f)
+						humanObject.leftLowerArmx +=2.0f;
+				}
+				else if(mode == 6){
+		            // Upper Arm Rotation
+					humanObject.rightUpperArmx+=2.0f;
+				}
+				else if(mode == 7){
+					if(humanObject.rightLowerArmx <= 0.0f)
+						humanObject.rightLowerArmx +=2.0f;
+				}
+				else if(mode == 8){
+					if(humanObject.hipx < 45.0f)
+						humanObject.hipx += 2.0f;
+				}
+				else if(mode == 9){
+					if(humanObject.leftUpperLegx < 60.0f)
+						humanObject.leftUpperLegx += 2.0f;
+				}
+				else if(mode == 10){
+					if(humanObject.leftLowerLegx < 120.0f)
+						humanObject.leftLowerLegx += 2.0f;
+				}
+				else if(mode == 11){
+					if(humanObject.rightUpperLegx < 60.0f)
+						humanObject.rightUpperLegx += 2.0f;
+				}
+				else if(mode == 12){
+					if(humanObject.rightLowerLegx < 120.0f)
+						humanObject.rightLowerLegx += 2.0f;
 				}
 			}
-			else{
-				if(humanObject.leftUpperArmy < 90.0f)
-					humanObject.leftUpperArmy += 2.0f;
-			}
+			glutPostRedisplay();
+			break;
 		}
-		else if(mode == 6){
-            // Head Rotation
-			if(humanObject.rightUpperArmy<90.0f)
-				humanObject.rightUpperArmy+=2.0f;
-		}
-		else if(mode == 8){
-			if(humanObject.hipy < 30.0f)
-				humanObject.hipy += 2.0f;
-		}
-		else if(mode == 9){
-			if(humanObject.leftUpperLegy < 30.0f)
-				humanObject.leftUpperLegy += 2.0f;
-		}
-		else if(mode == 11){
-			if(humanObject.rightUpperLegy < 30.0f)
-				humanObject.rightUpperLegy += 2.0f;
-		}
-	}
-	glutPostRedisplay();
-	break;  
-}
-case 'C':{
-	if(mode >= 0){
-		if(mode == 0){
-            //Hip Translation
-			humanObject.hipTranslatey -= 0.1f;
-		}
-		else if(mode == 1){
-            // Head Rotation
-			if(humanObject.heady>=-60.0f)
-				humanObject.heady-=2.0f;
-		}
-		else if(mode == 2){
-            // Head Rotation
-			if(humanObject.necky>=-45.0f)
-				humanObject.necky-=2.0f;
-		}
-		else if(mode == 3){
-            // Head Rotation
-			if(humanObject.torsoy>=-45.0f)
-				humanObject.torsoy-=2.0f;
-		}
-		else if(mode == 4){
-            // Head Rotation
-			if(humanObject.leftUpperArmy>=-90.0f)
-				humanObject.leftUpperArmy-=2.0f;
-		}
-		else if(mode == 6){
-            // Right Upper Arm Rotation
-			if(((int)humanObject.rightUpperArmx)%360 <= 20.0f || ((int)humanObject.rightUpperArmx)%360 >= 340.0f){
-				if(humanObject.rightUpperArmz < fabs(4.0/7.0*humanObject.rightLowerArmx)){
-					if(humanObject.rightUpperArmy > -30.0f){
-						humanObject.rightUpperArmy -= 2.0f;
+		case 'X':{
+			if(mode >= 0){
+				if(mode == 0){
+		            //Hip Translation
+					humanObject.hipTranslatex -= 0.1f;
+				}
+				else if(mode == 1){
+		            // Head Rotation
+					if(humanObject.headx>=-45.0f)
+						humanObject.headx-=2.0f;
+				}
+				else if(mode == 2){
+		            // Head Rotation
+					if(humanObject.neckx>=-25.0f)
+						humanObject.neckx-=2.0f;
+				}
+				else if(mode == 3){
+		            // Head Rotation
+					if(humanObject.torsox>=-25.0f)
+						humanObject.torsox-=2.0f;
+				}
+				else if(mode == 4){
+		            //Upper Arm Rotation
+					humanObject.leftUpperArmx-=2.0f;
+				}
+				else if(mode == 5){
+					if((((int)humanObject.leftUpperArmx)%360 <= 20.0f || ((int)humanObject.leftUpperArmx)%360 >= 340.0f) && humanObject.leftUpperArmy >= 30.0f){
+						if(humanObject.leftUpperArmz > -90.0f && humanObject.leftLowerArmx > -135.0f && humanObject.leftLowerArmx > 7.0/4.0*humanObject.leftUpperArmz){
+							humanObject.leftLowerArmx -= 2.0f;
+						}
+						else if(humanObject.leftUpperArmz < -90.0f){
+							if(humanObject.leftLowerArmx > -135.0f){
+								humanObject.leftLowerArmx -= 2.0f;
+							}
+						}
+					}
+					else{
+						if(humanObject.leftLowerArmx > -135.0f){
+							humanObject.leftLowerArmx -= 2.0f;
+						}
 					}
 				}
-				else  if(humanObject.rightUpperArmy > -90.0f){
-					humanObject.rightUpperArmy -= 2.0f;
+				else if(mode == 6){
+		            //Upper Arm Rotation
+					humanObject.rightUpperArmx-=2.0f;
 				}
-				else{
-					if(humanObject.rightUpperArmy > -90.0f){
-						humanObject.rightUpperArmy -= 2.0f;
+				else if(mode == 7){
+					if((((int)humanObject.rightUpperArmx)%360 <= 20.0f || ((int)humanObject.rightUpperArmx)%360 >= 340.0f) && humanObject.rightUpperArmy < -30.0f){
+						if(humanObject.rightUpperArmz < 90.0f && humanObject.rightLowerArmx > -135.0f && humanObject.rightLowerArmx > -1.0*7.0/4.0*humanObject.rightUpperArmz){
+							humanObject.rightLowerArmx -= 2.0f;
+						}
+						else if(humanObject.rightUpperArmz > 90.0f){
+							if(humanObject.rightLowerArmx > -135.0f){
+								humanObject.rightLowerArmx -= 2.0f;
+							}
+						}
+					}
+					else{
+						if(humanObject.rightLowerArmx > -135.0f){
+							humanObject.rightLowerArmx -= 2.0f;
+						}
 					}
 				}
+				else if(mode == 8){
+					if(humanObject.hipx > -45.0f)
+						humanObject.hipx -= 2.0f;         
+				}
+				else if(mode == 9){
+					if(humanObject.leftUpperLegx > -90.0f)
+						humanObject.leftUpperLegx -= 2.0f;
+				}
+				else if(mode == 10){
+					if(humanObject.leftLowerLegx > 0.0f)
+						humanObject.leftLowerLegx -= 2.0f;
+				}
+				else if(mode == 11){
+					if(humanObject.rightUpperLegx > -90.0f)
+						humanObject.rightUpperLegx -= 2.0f;
+				}
+				else if(mode == 12){
+					if(humanObject.rightLowerLegx > 0.0f)
+						humanObject.rightLowerLegx -= 2.0f;
+				}
 			}
+			glutPostRedisplay();
+			break;
 		}
-		else if(mode == 8){
-			if(humanObject.hipy > -30.0f)
-				humanObject.hipy -= 2.0f;
+		case 'c':{
+			if(mode >= 0){
+				if(mode == 0){
+		            //Hip Translation
+					humanObject.hipTranslatey += 0.1f;
+				}
+				else if(mode == 1){
+		            // Head Rotation
+					if(humanObject.heady<=60.0f)
+						humanObject.heady+=2.0f;
+				}
+				else if(mode == 2){
+		            // Head Rotation
+					if(humanObject.necky<=45.0f)
+						humanObject.necky+=2.0f;
+				}
+				else if(mode == 3){
+		            // Head Rotation
+					if(humanObject.torsoy<=45.0f)
+						humanObject.torsoy+=2.0f;
+				}
+				else if(mode == 4){
+		            // Left Upper Arm Rotation
+					if(((int)humanObject.rightUpperArmx )%360<= 20.0f || ((int)humanObject.rightUpperArmx)%360 >= 340.0f){
+						if(humanObject.leftUpperArmz > 4.0/7.0*humanObject.leftLowerArmx){
+							if(humanObject.leftUpperArmy < 30.0f)
+								humanObject.leftUpperArmy += 2.0f;
+						}else{
+							if(humanObject.leftUpperArmy < 90.0f)
+								humanObject.leftUpperArmy += 2.0f;
+						}
+					}
+					else{
+						if(humanObject.leftUpperArmy < 90.0f)
+							humanObject.leftUpperArmy += 2.0f;
+					}
+				}
+				else if(mode == 6){
+		            // Head Rotation
+					if(humanObject.rightUpperArmy<90.0f)
+						humanObject.rightUpperArmy+=2.0f;
+				}
+				else if(mode == 8){
+					if(humanObject.hipy < 30.0f)
+						humanObject.hipy += 2.0f;
+				}
+				else if(mode == 9){
+					if(humanObject.leftUpperLegy < 30.0f)
+						humanObject.leftUpperLegy += 2.0f;
+				}
+				else if(mode == 11){
+					if(humanObject.rightUpperLegy < 30.0f)
+						humanObject.rightUpperLegy += 2.0f;
+				}
+			}
+			glutPostRedisplay();
+			break;  
 		}
-		else if(mode == 9){
-			if(humanObject.leftUpperLegy > -30.0f)
-				humanObject.leftUpperLegy -= 2.0f;
+		case 'C':{
+			if(mode >= 0){
+				if(mode == 0){
+		            //Hip Translation
+					humanObject.hipTranslatey -= 0.1f;
+				}
+				else if(mode == 1){
+		            // Head Rotation
+					if(humanObject.heady>=-60.0f)
+						humanObject.heady-=2.0f;
+				}
+				else if(mode == 2){
+		            // Head Rotation
+					if(humanObject.necky>=-45.0f)
+						humanObject.necky-=2.0f;
+				}
+				else if(mode == 3){
+		            // Head Rotation
+					if(humanObject.torsoy>=-45.0f)
+						humanObject.torsoy-=2.0f;
+				}
+				else if(mode == 4){
+		            // Head Rotation
+					if(humanObject.leftUpperArmy>=-90.0f)
+						humanObject.leftUpperArmy-=2.0f;
+				}
+				else if(mode == 6){
+		            // Right Upper Arm Rotation
+					if(((int)humanObject.rightUpperArmx)%360 <= 20.0f || ((int)humanObject.rightUpperArmx)%360 >= 340.0f){
+						if(humanObject.rightUpperArmz < fabs(4.0/7.0*humanObject.rightLowerArmx)){
+							if(humanObject.rightUpperArmy > -30.0f){
+								humanObject.rightUpperArmy -= 2.0f;
+							}
+						}
+						else  if(humanObject.rightUpperArmy > -90.0f){
+							humanObject.rightUpperArmy -= 2.0f;
+						}
+						else{
+							if(humanObject.rightUpperArmy > -90.0f){
+								humanObject.rightUpperArmy -= 2.0f;
+							}
+						}
+					}
+				}
+				else if(mode == 8){
+					if(humanObject.hipy > -30.0f)
+						humanObject.hipy -= 2.0f;
+				}
+				else if(mode == 9){
+					if(humanObject.leftUpperLegy > -30.0f)
+						humanObject.leftUpperLegy -= 2.0f;
+				}
+				else if(mode == 11){
+					if(humanObject.rightUpperLegy > -30.0f)
+						humanObject.rightUpperLegy -= 2.0f;
+				}
+			}
+			glutPostRedisplay();
+			break;  
 		}
-		else if(mode == 11){
-			if(humanObject.rightUpperLegy > -30.0f)
-				humanObject.rightUpperLegy -= 2.0f;
-		}
-	}
-	glutPostRedisplay();
-	break;  
-}
-//
-default:
-{
+		//
+		default:
+		{
 
-} 
-}
+		} 
+	}
 }
 
 /* Main function: GLUT runs as a console application starting at main() */
