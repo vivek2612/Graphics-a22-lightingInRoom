@@ -166,7 +166,7 @@ void display() {
     glPopMatrix();
 
     // Drawing Almirag
-    almirahObject.drawAlmirah(-40.0,-6.0*roomSize/7.0 + 14.5f ,-20.0);
+    almirahObject.drawAlmirah(-40.0,-6.0*roomSize/7.0 + 9.5f ,-20.0);
 
     //Drawing Table
     glPushMatrix();

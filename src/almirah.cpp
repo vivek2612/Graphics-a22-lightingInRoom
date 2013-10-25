@@ -16,7 +16,7 @@ void Almirah::createAllLists(){
 void Almirah::drawAlmirah(float xTranslate, float yTranslate, float zTranslate){
 	glPushMatrix();
 		Texture tex;
-		GLuint t= tex.loadBMP_custom("./images/wood2.bmp");   
+		GLuint t= tex.loadBMP_custom("./images/almirahDoor.bmp");   
 		glTranslatef(xTranslate, yTranslate, zTranslate);
 		glScalef(xScale, yScale, zScale);
 		compartment.drawCuboid();

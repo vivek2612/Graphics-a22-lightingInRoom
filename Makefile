@@ -18,7 +18,7 @@ OBJDIR = $(PROJECT_ROOT)/obj
 BINDIR = $(PROJECT_ROOT)/bin
 
 LIBS = -lGL -lGLU -lglut
-TARGET = assginment2
+TARGET = a22
 
 SRCS := $(wildcard $(SRCDIR)/*.cpp)
 INCS := $(wildcard $(SRCDIR)/*.h)
