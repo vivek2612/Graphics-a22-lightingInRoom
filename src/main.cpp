@@ -18,6 +18,7 @@
 #include "vector"
 #include "human.h"
 #include "lamp.h"
+#include "almirah.h"
 
 #define _USE_MATH_DEFINES
 
@@ -30,6 +31,8 @@ float eyez=30.0f;
 float eyey=-10.0f;
 
 Lamp lampObject(30.0f, 1.5f);
+Almirah almirahObject(0.5f, 1.5f, 1.0f);
+
 Human humanObject;
 int mode = -1;
 /* Initialize OpenGL Graphics */
@@ -80,6 +83,7 @@ void initGL() {
   roomObject.createAllLists();
   humanObject.createAllLists();
   lampObject.createAllLists();
+  almirahObject.createAllLists();
 
   // v.push_back(Point(0,0,0));
   v.push_back(Point(-20,0,-20));
@@ -88,6 +92,7 @@ void initGL() {
   v.push_back(Point(10,10,30));
   v.push_back(Point(30,10,35));
   v.push_back(Point(0,0,0));
+
   // v.push_back(Point(2.0,14.0,10));
   b.controlPoints=v;
   curvePoints=b.findCurve();
@@ -159,6 +164,9 @@ void display() {
     	glTranslatef(0.0,-6.0*roomSize/7.0 + 14.5f ,-20.0);
     	lampObject.drawLamp();
     glPopMatrix();
+
+    // Drawing Almirag
+    almirahObject.drawAlmirah(-40.0,-6.0*roomSize/7.0 + 14.5f ,-20.0);
 
     //Drawing Table
     glPushMatrix();
